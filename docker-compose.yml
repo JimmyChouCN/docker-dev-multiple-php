@@ -1,0 +1,126 @@
+version: '3'
+services:
+    nginx:
+        image: nginx
+        # 数据卷
+        volumes:
+            - ./nginx/html:/usr/share/nginx/html
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./nginx/sites:/etc/nginx/sites-available
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./nginx/ssl:/etc/nginx/ssl
+            - ./nginx/log:/var/log/nginx
+        # 端口映射
+        ports:
+            - "8088:80"
+            - "443:443"
+        # 依赖关系 先跑php
+        depends_on:
+            - "php56"
+            - "php70"
+            - "php72"
+        restart: always
+        links:
+            - php56:fpm56
+            - php70:fpm70
+            - php72:fpm72
+        networks:
+            - frontend
+        # container_name: nginx
+    
+    mysql:
+        image: mysql:5.7
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "3306:3306"
+        networks:
+            - backend
+        volumes:
+            - ./databases/mysql/data:/var/lib/mysql
+            - ./databases/mysql/log:/var/log/mysql
+        # container_name: mysql
+
+    redis:
+        image: redis
+        ports:
+            - "6379:6379"
+        networks:
+            - backend
+        restart: always
+        # container_name: redis
+
+    php56:
+        build:
+            context: ./php/56
+            dockerfile: Dockerfile
+        image: php:5.6-fpm
+        expose:
+            - "9000"
+        # ports:
+            # - "9156:9156"
+        depends_on:
+            - mysql
+            - redis
+        restart: always
+        networks:
+            - backend
+            - frontend
+        volumes:
+            - ./nginx/html:/var/www/html
+            - ./php/log/php56:/var/log/php-fpm/
+            # - ./php/56/php.ini:/usr/local/etc/php/php.ini
+        # container_name: php56
+    
+    php70:
+        build: 
+            context: ./php/70
+            dockerfile: Dockerfile
+        # image: php:7.0-fpm
+        expose:
+            - "9000"
+        # ports:
+        #     - "9170:9000"
+        depends_on:
+            - mysql
+            - redis
+        restart: always
+        networks:
+            - backend
+            - frontend
+        volumes:
+            - ./nginx/html:/var/www/html
+            - ./php/log/php70:/var/log/php-fpm/
+            # - ./php/70/php.ini:/usr/local/etc/php/php.ini
+        # container_name: php70
+    
+    php72:
+        build: 
+            context: ./php/72
+            dockerfile: Dockerfile
+        # image: php:7.2-fpm
+        # ports:
+        #     - "9172:9000"
+        expose:
+            - "9000"
+        depends_on:
+            - mysql
+            - redis
+        restart: always
+        networks:
+            - backend
+            - frontend
+        volumes:
+            - ./nginx/html:/var/www/html
+            - ./php/log/php72:/var/log/php-fpm/
+            # - ./php/72/php.ini:/usr/local/etc/php/php.ini
+        # container_name: php72
+
+networks:
+    frontend:
+        # driver: bridge
+    backend:
+        # driver: bridge
+
