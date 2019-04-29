@@ -9,6 +9,7 @@ services:
             # 指定目录下的项目
             - /Users/jimmy/Web/www:/var/www/html:rw
             - /Users/jimmy/Web/www:/usr/share/nginx/html:rw
+            # other
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf
             - ./nginx/sites:/etc/nginx/sites-available
             - ./nginx/conf.d:/etc/nginx/conf.d
@@ -44,6 +45,7 @@ services:
         networks:
             - backend
         volumes:
+            # 数据持久化
             - ./databases/mysql/data:/var/lib/mysql
             - ./databases/mysql/log:/var/log/mysql
         # container_name: mysql
@@ -64,8 +66,6 @@ services:
         image: php:5.6-fpm
         expose:
             - "9000"
-        # ports:
-            # - "9156:9156"
         depends_on:
             - mysql
             - redis
@@ -74,7 +74,7 @@ services:
             - backend
             - frontend
         volumes:
-            # 指定目录下的项目
+            # test
             # - ./nginx/html:/var/www/html:ro
             # 指定目录下的项目
             - /Users/jimmy/Web/www:/var/www/html:rw
@@ -89,8 +89,6 @@ services:
         # image: php:7.0-fpm
         expose:
             - "9000"
-        # ports:
-        #     - "9170:9000"
         depends_on:
             - mysql
             - redis
@@ -99,6 +97,7 @@ services:
             - backend
             - frontend
         volumes:
+            # test
             # - ./nginx/html:/var/www/html:ro
             # 指定目录下的项目
             - /Users/jimmy/Web/www:/var/www/html:rw
@@ -111,8 +110,6 @@ services:
             context: ./php/72
             dockerfile: Dockerfile
         # image: php:7.2-fpm
-        # ports:
-        #     - "9172:9000"
         expose:
             - "9000"
         depends_on:
@@ -123,6 +120,7 @@ services:
             - backend
             - frontend
         volumes:
+            # test
             # - ./nginx/html:/var/www/html:ro
             # 指定目录下的项目
             - /Users/jimmy/Web/www:/var/www/html:rw
