@@ -14,8 +14,8 @@ services:
             - ./nginx/sites:/etc/nginx/sites-available
             - ./nginx/conf.d:/etc/nginx/conf.d
             - ./nginx/ssl:/etc/nginx/ssl
-            - ./nginx/log:/var/log/nginx
-            - ./nginx/log/project_log:/var/log/nginx/project_log
+            - ./logs/nginx:/var/log/nginx
+            - ./logs/nginx/project_log:/var/log/nginx/project_log
         # 端口映射
         ports:
             - "8088:80"
@@ -47,7 +47,7 @@ services:
         volumes:
             # 数据持久化
             - ./databases/mysql/data:/var/lib/mysql
-            - ./databases/mysql/log:/var/log/mysql
+            - ./logs/mysql:/var/log/mysql
         # container_name: mysql
 
     redis:
@@ -78,7 +78,7 @@ services:
             # - ./nginx/html:/var/www/html:ro
             # 指定目录下的项目
             - /Users/jimmy/Web/www:/var/www/html:rw
-            - ./php/log/php56:/var/log/php-fpm/
+            - ./logs/php/56:/var/log/php-fpm/
             # - ./php/56/php.ini:/usr/local/etc/php/php.ini
         # container_name: php56
     
@@ -101,7 +101,7 @@ services:
             # - ./nginx/html:/var/www/html:ro
             # 指定目录下的项目
             - /Users/jimmy/Web/www:/var/www/html:rw
-            - ./php/log/php70:/var/log/php-fpm/
+            - ./logs/php/70:/var/log/php-fpm/
             # - ./php/70/php.ini:/usr/local/etc/php/php.ini
         # container_name: php70
     
@@ -124,7 +124,7 @@ services:
             # - ./nginx/html:/var/www/html:ro
             # 指定目录下的项目
             - /Users/jimmy/Web/www:/var/www/html:rw
-            - ./php/log/php72:/var/log/php-fpm/
+            - ./logs/php/72:/var/log/php-fpm/
             # - ./php/72/php.ini:/usr/local/etc/php/php.ini
         # container_name: php72
 
