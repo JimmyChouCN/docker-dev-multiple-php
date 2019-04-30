@@ -81,6 +81,7 @@ services:
             - /Users/jimmy/Web/www:/var/www/html:rw
             - ./logs/php/56:/var/log/php-fpm/
             # - ./php/56/php.ini:/usr/local/etc/php/php.ini
+            # - ./php/56/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
         links:
             - mysql:docker-mysql
 
@@ -107,6 +108,7 @@ services:
             - /Users/jimmy/Web/www:/var/www/html:rw
             - ./logs/php/70:/var/log/php-fpm/
             # - ./php/70/php.ini:/usr/local/etc/php/php.ini
+            # - ./php/70/php-fpm.d/www.conf:/usr/local/etc/php/php-fpm/www.conf
         links:
             - mysql:docker-mysql
         # container_name: php70
@@ -132,6 +134,7 @@ services:
             - /Users/jimmy/Web/www:/var/www/html:rw
             - ./logs/php/72:/var/log/php-fpm/
             # - ./php/72/php.ini:/usr/local/etc/php/php.ini
+            # - ./php/72/php-fpm.d/www.conf:/usr/local/etc/php/php-fpm/www.conf
         links:
             - mysql:docker-mysql
         # container_name: php72
