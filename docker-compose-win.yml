@@ -1,0 +1,194 @@
+version: '3'
+services:
+    nginx:
+        image: nginx
+        # 数据卷
+        volumes:
+            # - ./nginx/html:/usr/share/nginx/html
+            # - ./nginx/html:/var/www/html
+            # 指定目录下的项目
+            - E:\Project\PHP_project\symfony34auto:/var/www/html/symfony34auto:rw
+            - E:\Project\PHP_project\symfony34auto:/usr/share/nginx/html/symfony34auto:rw
+            # - E:\Project\PHP_project\wiz\register:/var/www/html/register:rw
+            # - E:\Project\PHP_project\wiz\register:/usr/share/nginx/html/register:rw
+            # - E:\Project\PHP_project\wiz\singou-must-report-api:/var/www/html/singou-must-report-api:rw
+            # - E:\Project\PHP_project\wiz\singou-must-report-api:/usr/share/nginx/html/singou-must-report-api:rw
+            # - E:\Project\PHP_project\soonest\cic_circulation_system:/var/www/html/cic_circulation_system:rw
+            # - E:\Project\PHP_project\soonest\cic_circulation_system:/usr/share/nginx/html/cic_circulation_system:rw
+            # - E:\Project\PHP_project\soonest\cic_sales:/var/www/html/cic_sales:rw
+            # - E:\Project\PHP_project\soonest\cic_sales:/usr/share/nginx/html/cic_sales:rw
+            # - E:\Project\PHP_project\soonest\integral_mall_backend:/var/www/html/integral_mall_backend:rw
+            # - E:\Project\PHP_project\soonest\integral_mall_backend:/usr/share/nginx/html/integral_mall_backend:rw
+            # other
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./nginx/sites:/etc/nginx/sites-available
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./nginx/ssl:/etc/nginx/ssl
+            - ./logs/nginx:/var/log/nginx
+            - ./logs/nginx/project_log:/var/log/nginx/project_log
+        # 端口映射[外部访问端口+内部端口]
+        ports:
+            - "80:80"
+            - "4433:443"
+        # 依赖关系 先跑php
+        depends_on:
+            # - "php56"
+            - "php70"
+            - "php72"
+        restart: always
+        environment:
+            - TZ=Asia/Shanghai
+        links:
+            # - php56:fpm56
+            - php70:fpm70
+            - php72:fpm72
+        networks:
+            - frontend
+        # container_name: nginx
+
+    mongo:
+        image: mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: 123456
+        ports:
+            - "27018:27017"
+        networks:
+            - backend
+        volumes: 
+            - ./databases/mongo/data/db:/data/db
+            - ./logs/mongo:/data/log
+        # container_name: mongo
+
+    mysql:
+        image: mysql:5.7
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "3308:3306"
+        networks:
+            - backend
+        volumes:
+            # 数据持久化
+            - ./databases/mysql/data:/var/lib/mysql
+            - ./databases/mysql/my.cnf:/etc/mysql/my.cnf
+            - ./logs/mysql:/var/log/mysql
+        # container_name: mysql
+
+    redis:
+        image: redis
+        ports:
+            - "6379:6379"
+        networks:
+            - backend
+        restart: always
+        # container_name: redis
+
+    # php56:
+    #     build:
+    #         context: ./php/56
+    #         dockerfile: Dockerfile
+    #     image: php:5.6-fpm
+    #     expose:
+    #         - "9000"
+    #     depends_on:
+    #         - mysql
+    #         - redis
+    #         - mongo
+    #     restart: always
+    #     networks:
+    #         - backend
+    #         - frontend
+    #     volumes:
+    #         # test
+    #         # - ./nginx/html:/var/www/html:ro
+    #         # 指定目录下的项目
+    #         - E:\Project\PHP_project\symfony34auto:/var/www/html/symfony34auto:rw
+    #         # - E:\Project\PHP_project\soonest\cic_circulation_system:/var/www/html/cic_circulation_system:rw
+    #         # - E:\Project\PHP_project\soonest\cic_sales:/var/www/html/cic_sales:rw
+    #         # - E:\Project\PHP_project\soonest\integral_mall_backend:/var/www/html/integral_mall_backend:rw
+    #         - ./logs/php/56:/var/log/php-fpm/
+    #         # - ./php/56/php.ini:/usr/local/etc/php/php.ini
+    #         # - ./php/56/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    #     links:
+    #         - mysql:docker-mysql
+
+    #     # container_name: php56
+    
+    php70:
+        build: 
+            context: ./php/70
+            dockerfile: Dockerfile
+        # image: php:7.0-fpm
+        expose:
+            - "9000"
+        depends_on:
+            - mysql
+            - redis
+            - mongo
+        restart: always
+        networks:
+            - backend
+            - frontend
+        volumes:
+            # test
+            # - ./nginx/html:/var/www/html:ro
+            # 指定目录下的项目
+            - E:\Project\PHP_project\symfony34auto:/var/www/html/symfony34auto:rw
+            # - E:\Project\PHP_project\wiz\register:/var/www/html/register:rw
+            # - E:\Project\PHP_project\soonest\cic_circulation_system:/var/www/html/cic_circulation_system:rw
+            # - E:\Project\PHP_project\soonest\cic_sales:/var/www/html/cic_sales:rw
+            # - E:\Project\PHP_project\soonest\integral_mall_backend:/var/www/html/integral_mall_backend:rw
+            - ./logs/php/70:/var/log/php-fpm/
+            # - ./php/70/php.ini:/usr/local/etc/php/php.ini
+            # - ./php/70/php-fpm.d/www.conf:/usr/local/etc/php/php-fpm/www.conf
+        environment:
+            - TZ=Asia/Shanghai
+        links:
+            - mysql:docker-mysql
+        # container_name: php70
+    
+    php72:
+        build: 
+            context: ./php/72
+            dockerfile: Dockerfile
+        # image: php:7.2-fpm
+        expose:
+            - "9000"
+        depends_on:
+            - mysql
+            - redis
+            - mongo
+        restart: always
+        networks:
+            - backend
+            - frontend
+        volumes:
+            # test
+            # - ./nginx/html:/var/www/html:ro
+            # 指定目录下的项目
+            - E:\Project\PHP_project\symfony34auto:/var/www/html/symfony34auto:rw
+            # - E:\Project\PHP_project\wiz\singou-must-report-api:/var/www/html/singou-must-report-api:rw
+            # - E:\Project\PHP_project\wiz\hr-admin:/var/www/html/hr-admin:rw
+            # - E:\Project\PHP_project\soonest\cic_circulation_system:/var/www/html/cic_circulation_system:rw
+            # - E:\Project\PHP_project\soonest\cic_sales:/var/www/html/cic_sales:rw
+            # - E:\Project\PHP_project\soonest\integral_mall_backend:/var/www/html/integral_mall_backend:rw
+            - ./logs/php/72:/var/log/php-fpm/
+            - ./php/72/php.ini:/usr/local/etc/php/php.ini
+            # - ./php/72/php-fpm.d/www.conf:/usr/local/etc/php/php-fpm/www.conf
+        environment:
+            - TZ=Asia/Shanghai
+        links:
+            - mysql:docker-mysql
+            - redis
+        # container_name: php72
+
+networks:
+    frontend:
+        # driver: bridge
+    backend:
+        # driver: bridge
+
