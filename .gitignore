@@ -1,3 +1,13 @@
+.idea
+.env
 /logs
-/databases/*/data/
-/nginx/sites/
+/databases/mysql/data
+/databases/mongo/data/db
+/databases/redis/data
+/nginx/sites/*.conf
+/nginx/ssl/*.crt
+/nginx/ssl/*.key
+/nginx/ssl/*.csr
+
+
+.DS_Store
